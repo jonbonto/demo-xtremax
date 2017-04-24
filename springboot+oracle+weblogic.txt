@@ -1,0 +1,79 @@
+SPRING BOOT+ORACLE DB+WEBLOGIC
+
+================================================================= Connect to ORACLE DB(11 g)================================================================
+
+ 1. file pom.xml
+    tambah dependency berikut:
+    <dependency>
+	<groupId>com.oracle</groupId>
+	<artifactId>ojdbc6</artifactId>
+	<version>1.0</version>
+    </dependency>
+    <dependency>
+      	<groupId>org.springframework.data</groupId>
+	<artifactId>spring-data-oracle</artifactId>
+	<version>1.0.0.RELEASE</version>
+    </dependency>
+
+ 2. file application.properties
+    spring.jpa.database-platform=org.hibernate.dialect.Oracle10gDialect
+    spring.datasource.url=jdbc:oracle:thin:@localhost:1521:orcl
+    spring.datasource.username=username
+    spring.datasource.password=password
+    spring.datasource.driver-class-name=oracle.jdbc.OracleDriver  
+
+
+=============================================================================================================================================================
+
+================================================================= Package to WAR and Deploy==================================================================
+
+ 1. Set packaging to WAR
+    <packaging>war</packaging>
+
+ 2. Tomcat to provided
+    <dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-tomcat</artifactId>
+	<scope>provided</scope>
+    </dependency>
+
+ 3. Application extends SpringBootServletInitializer and (for Weblogic implements WebApplicationInitializer)
+
+    public class DemoApplication extends SpringBootServletInitializer implements WebApplicationInitializer {
+
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(DemoApplication.class);
+    }
+
+	public static void main(String[] args) {
+		SpringApplication.run(DemoApplication.class, args);
+	}
+    }
+
+=============================================================================================================================================================
+
+================================================================= Khusus untuk  Weblogic=====================================================================
+
+ 1. buat folder webapp/WEB-INF di src/main dan buat 2 file, dispatcherServlet-servlet.xml dan weblogic.xml
+	
+	Isi file weblogic.xml:
+
+	<?xml version="1.0" encoding="UTF-8"?>
+	<wls:weblogic-web-app xmlns:wls="http://xmlns.oracle.com/weblogic/weblogic-web-app" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 		xsi:schemaLocation="http://java.sun.com/xml/ns/javaee         http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd         		http://xmlns.oracle.com/weblogic/weblogic-web-app         http://xmlns.oracle.com/weblogic/weblogic-web-app/1.4/weblogic-web-app.xsd">
+    		<wls:container-descriptor>
+        		<wls:prefer-application-packages>
+            			<wls:package-name>org.slf4j</wls:package-name> <!-- mengganti jar slf4j yang di weblogic dengan spring boot-->
+            			<wls:package-name>org.jboss.logging</wls:package-name> <!-- mengganti jar jboss-logging yang di weblogic dengan spring boot-->
+        		</wls:prefer-application-packages>
+    		</wls:container-descriptor>
+    		<wls:context-root>demo</wls:context-root>
+	</wls:weblogic-web-app>
+
+ 	Isi file dispatcherServlet-servlet.xml:
+
+	<?xml version="1.0" encoding="UTF-8"?>
+	<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	</beans>

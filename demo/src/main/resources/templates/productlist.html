@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+    <title>Product List</title>
+</head>
+<body>
+<section layout:fragment="header">
+    <h1>
+        Product
+        <small>Control panel</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Product</li>
+    </ol>
+</section>
+<div layout:fragment="content">
+<!-- Main row -->
+    <div class="row">
+        <!-- Left col -->
+        <section class="col-lg-7 connectedSortable">
+			 <div class="box box-primary">
+		         <div class="box-header">
+					<h3 class="box-title">List Product</h3>
+				 </div>
+				 <p class="label label-success" th:if="${success}" th:text="${success}">Success</p>
+				 <div class="box-body">
+				 	<p th:each="product,itrStat : ${products}">
+				 		<a  class="btn btn-primary" th:href="@{'/product/'+${product.id}}" th:text="${product.name}"> </a>
+						
+					</p>
+				    <a th:href="@{/addproduct}" class="btn btn-primary">Add New Product</a>
+			 	 </div>
+			 </div>
+		</section>
+	</div>
+</div>
+</body>
+</html>
